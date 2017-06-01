@@ -1,0 +1,93 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+
+/* REACTABULAR */
+table .sort {
+    cursor: pointer;
+    cursor: hand;
+}
+
+table .sort:after {
+    padding-left: 1em;
+
+    font-size: 0.5em;
+}
+
+table .sort-none:after {
+    content: '\21D5';
+
+    padding-left: 0.5em;
+    font-size: 1em;
+}
+
+table .sort-asc:after {
+    content: '\25BC';
+
+}
+
+table .sort-desc:after {
+    content: '\25B2';
+}
+
+table {
+    width: 100%;
+}
+
+.controls {
+    overflow: auto;
+}
+
+.per-page-container {
+    margin: 1em;
+
+    float: left;
+}
+
+.per-page-container input {
+    margin-left: 1em;
+}
+
+.scroll-container {
+    margin: 1em;
+
+    float: left;
+}
+
+.search-container {
+    margin: 1em;
+
+    float: right;
+}
+
+.edit {
+    margin-right: 1em;
+}
+
+.cancel-button {
+    float: right;
+}
+
+.header-input,
+.column-filter-input {
+    float: left;
+    width: 100%;
+}
+
+.highlight {
+    background: rgb(255, 255, 175);
+}
+
+.selected-row td {
+    background: rgb(255, 255, 175) !important; /* XXX */
+}
+
+/* inline-editing.md */
+.edited {
+    border-left: 0.2em solid orange;
+    padding-left: 0.2em;
+}
+
+
