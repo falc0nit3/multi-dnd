@@ -11,7 +11,7 @@ import { generateRows } from './../../helpers';
 import PropTypes from 'prop-types';
 
 const propTypes = {
-  total: PropTypes.number.isRequired
+  rows: PropTypes.array.isRequired
 };
 
 const schema = {
@@ -42,7 +42,8 @@ class DndTable extends Component {
   constructor(props) {
     super(props);
 
-    const rows = generateRows(this.props.total, schema );
+    //const rows = generateRows(this.props.total, schema );
+    const rows = this.props.rows;
 
     this.state = {
       columns: [

@@ -2,7 +2,7 @@ import { createStore, applyMiddleware } from 'redux';
 import reducer from './reducers';
 import thunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
-import { generateRows } from './helpers';
+//import { generateRows } from './helpers';
 
 // export default(initialState) => {
 //   return createStore(reducer, composeWithDevTools(
@@ -34,8 +34,8 @@ const schema = {
 
 const middleware = applyMiddleware(thunk);
 
-const initialState = generateRows(20, schema );
-const store = createStore(reducer, {tables: initialState}, composeWithDevTools(
+//const initialState = generateRows(20, schema );
+const store = createStore(reducer, {}, composeWithDevTools(
   middleware,
 ));
 
