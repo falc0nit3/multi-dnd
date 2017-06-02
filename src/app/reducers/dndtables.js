@@ -130,8 +130,6 @@ export default function tables(state = initialState, action) {
         newTables[sourceTableIndex] = newrows;
 
         return Object.assign({}, state, {tables: newTables, changed: !state.changed});
-
-        //return newState;
       }
       else{
         // Different Table
@@ -160,8 +158,35 @@ export default function tables(state = initialState, action) {
 
         return Object.assign({}, state, {tables: newTables, changed: !state.changed});
       }
+    }
+    case AT.ATTACH_ROW: {
+      const payload = action.payload;
+      const rowId = payload.sourceRowId;
+      const tableId = payload.tableId;
 
-      return state;
+      const tables = cloneDeep(state.tables);
+      console.log('ATTACH_ROW!');
+
+      let toMoveObject = {};
+      Object.keys(tables).map(function(key){
+        const table = tables[key];
+        const rowIndex = findIndex(table, {id: rowId});
+
+        // If we have found the table that contains this row, we remove it from there and add it to our destination table
+        if (rowIndex !== -1) {
+          toMoveObject = table.filter(row => row['id'] === rowId)[0];
+
+          // Remove it from this table
+          table.splice(rowIndex, 1);
+        }
+      });
+
+      // Add the source row to the destination table
+      if (!isEmptyObj(toMoveObject)){
+        tables[tableId].push(toMoveObject);
+      }
+
+      return Object.assign({}, state, {tables: tables, changed: !state.changed});
     }
     default:
       return state;

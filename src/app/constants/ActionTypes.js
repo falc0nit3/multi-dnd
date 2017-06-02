@@ -10,4 +10,5 @@ export const CONFIRM_EDIT = 'TABLES/CONFIRM_EDIT';
 
 // DND Table
 export const MOVE_ROW = 'MOVE_ROW';
+export const ATTACH_ROW = 'ATTACH_ROW';
 

@@ -8,3 +8,11 @@ export function moveRow(sourceRowId, targetRowId, sourceTableId, destinationTabl
     })
   }
 }
+export function attachRow(sourceRowId, tableId) {
+  return function (dispatch) {
+    dispatch({
+      type: AT.ATTACH_ROW,
+      payload: { sourceRowId, tableId }
+    })
+  }
+}

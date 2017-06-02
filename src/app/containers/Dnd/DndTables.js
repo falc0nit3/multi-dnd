@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import DnDTable from './DndTable';
-import { moveRow } from '../../actions/TableActions';
+import { moveRow, attachRow } from '../../actions/TableActions';
 import { bindActionCreators } from 'redux';
 
 const propTypes = {
@@ -15,7 +15,7 @@ const propTypes = {
 
 class DndTables extends Component {
   render() {
-    const { dndtables, moveAction } = this.props;
+    const { dndtables, moveAction, attachAction } = this.props;
     const tables = dndtables.tables;
     return (
       <div>
@@ -26,6 +26,7 @@ class DndTables extends Component {
               <div key={key}>
               <DnDTable
                 onMoveHandler={moveAction}
+                onAttachHandler={attachAction}
                 type={key}
                 rows={items}/>
               </div>
@@ -48,7 +49,8 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch){
   return {
-    moveAction: bindActionCreators(moveRow, dispatch)
+    moveAction: bindActionCreators(moveRow, dispatch),
+    attachAction: bindActionCreators(attachRow, dispatch)
   }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(DndTables);

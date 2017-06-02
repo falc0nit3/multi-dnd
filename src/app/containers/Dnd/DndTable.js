@@ -8,12 +8,14 @@ import * as Table from 'reactabular-table';
 import * as dnd from './../../../lib/custom-dnd';
 import * as resolve from 'table-resolver';
 import PropTypes from 'prop-types';
+import DndTableTarget from './DndTableTarget';
 
 
 const propTypes = {
   rows: PropTypes.array.isRequired,
   type: PropTypes.string.isRequired,
-  onMoveHandler: PropTypes.func.isRequired
+  onMoveHandler: PropTypes.func.isRequired,
+  onAttachHandler: PropTypes.func.isRequired,
 };
 
 @DragDropContext(HTML5Backend)
@@ -105,7 +107,6 @@ class DndTable extends Component {
     }
   }
 
-
   render() {
     const components = {
       header: {
@@ -115,7 +116,8 @@ class DndTable extends Component {
         row: dnd.Row
       }
     };
-    const { columns, rows } = this.state;
+    const { columns, rows, tableId } = this.state;
+    const { onAttachHandler } = this.props;
     const resolvedColumns = resolve.columnChildren({ columns });
     const resolvedRows = resolve.resolve({
       columns: resolvedColumns,
@@ -123,20 +125,19 @@ class DndTable extends Component {
     })(rows);
 
     return (
-      <Table.Provider
-        components={components}
-        columns={resolvedColumns}
-      >
+      <DndTableTarget rows={resolvedRows} tableId={tableId} onAttachHandler={onAttachHandler}>
+        <Table.Provider
+          components={components}
+          columns={resolvedColumns}>
         <Table.Header
-          headerRows={resolve.headerRows({ columns })}
-        />
+            headerRows={resolve.headerRows({ columns })} />
 
-        <Table.Body
-          rows={resolvedRows}
-          rowKey="id"
-          onRow={this.onRow}
-        />
-      </Table.Provider>
+          <Table.Body
+            rows={resolvedRows}
+            rowKey="id"
+            onRow={this.onRow} />
+        </Table.Provider>
+      </DndTableTarget>
     );
   }
   onRow(row) {
