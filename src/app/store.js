@@ -10,31 +10,8 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 //   ), initialState);
 // }
 
-const schema = {
-  type: 'object',
-  properties: {
-    id: {
-      type: 'string'
-    },
-    name: {
-      type: 'string'
-    },
-    position: {
-      type: 'string'
-    },
-    salary: {
-      type: 'integer'
-    },
-    active: {
-      type: 'boolean'
-    }
-  },
-  required: ['id', 'name', 'position', 'salary', 'active']
-};
 
 const middleware = applyMiddleware(thunk);
-
-//const initialState = generateRows(20, schema );
 const store = createStore(reducer, {}, composeWithDevTools(
   middleware,
 ));

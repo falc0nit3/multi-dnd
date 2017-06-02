@@ -7,35 +7,14 @@ import cloneDeep from 'lodash/cloneDeep';
 import * as Table from 'reactabular-table';
 import * as dnd from './../../../lib/custom-dnd';
 import * as resolve from 'table-resolver';
-import { generateRows } from './../../helpers';
 import PropTypes from 'prop-types';
 
+
 const propTypes = {
-  rows: PropTypes.array.isRequired
+  rows: PropTypes.array.isRequired,
+  type: PropTypes.string.isRequired,
+  onMoveHandler: PropTypes.func.isRequired
 };
-
-const schema = {
-  type: 'object',
-  properties: {
-    id: {
-      type: 'string'
-    },
-    name: {
-      type: 'string'
-    },
-    position: {
-      type: 'string'
-    },
-    salary: {
-      type: 'integer'
-    },
-    active: {
-      type: 'boolean'
-    }
-  },
-  required: ['id', 'name', 'position', 'salary', 'active']
-};
-
 
 @DragDropContext(HTML5Backend)
 class DndTable extends Component {
@@ -47,6 +26,22 @@ class DndTable extends Component {
 
     this.state = {
       columns: [
+        {
+          property: 'id',
+          props: {
+            label: 'ID',
+            style: {
+              width: 200
+            }
+          },
+          header: {
+            label: 'ID',
+            props: {
+              label: 'ID',
+              onMove: o => this.onMoveColumn(o)
+            }
+          },
+        },
         {
           property: 'name',
           props: {
@@ -94,7 +89,8 @@ class DndTable extends Component {
           }
         }
       ],
-      rows
+      rows,
+      tableId: this.props.type
     };
 
     this.onRow = this.onRow.bind(this);
@@ -102,6 +98,14 @@ class DndTable extends Component {
     this.onMoveColumn = this.onMoveColumn.bind(this);
     this.onMoveChildColumn = this.onMoveChildColumn.bind(this);
   }
+
+  componentWillReceiveProps(nextProps, nextContext) {
+    if (this.props.rows !== nextProps.rows) {
+      this.setState({rows: nextProps.rows});
+    }
+  }
+
+
   render() {
     const components = {
       header: {
@@ -138,17 +142,24 @@ class DndTable extends Component {
   onRow(row) {
     return {
       rowId: row.id,
-      onMove: this.onMoveRow
+      onMove: this.onMoveRow,
+      tableId: this.state.tableId
     };
   }
-  onMoveRow({ sourceRowId, targetRowId }) {
-    const rows = dnd.moveRows({
-      sourceRowId,
-      targetRowId
-    })(this.state.rows);
+  onMoveRow({ sourceRowId, targetRowId, sourceTableId, destinationTableId }) {
 
-    if (rows) {
-      this.setState({ rows });
+    const { onMoveHandler } = this.props;
+    onMoveHandler(sourceRowId, targetRowId, sourceTableId, destinationTableId);
+
+    if (false) {
+      const rows = dnd.moveRows({
+        sourceRowId,
+        targetRowId
+      })(this.state.rows);
+
+      if (rows) {
+        this.setState({rows});
+      }
     }
   }
   onMoveColumn(labels) {

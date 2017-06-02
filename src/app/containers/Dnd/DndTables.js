@@ -5,14 +5,18 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import DnDTable from './DndTable';
+import { moveRow } from '../../actions/TableActions';
+import { bindActionCreators } from 'redux';
 
 const propTypes = {
-  dndtables: PropTypes.object.isRequired
+  dndtables: PropTypes.object.isRequired,
+  moveAction: PropTypes.func.isRequired
 };
 
 class DndTables extends Component {
   render() {
-    const tables = this.props.dndtables.tables;
+    const { dndtables, moveAction } = this.props;
+    const tables = dndtables.tables;
     return (
       <div>
         {
@@ -21,6 +25,8 @@ class DndTables extends Component {
             return (
               <div key={key}>
               <DnDTable
+                onMoveHandler={moveAction}
+                type={key}
                 rows={items}/>
               </div>
             )
@@ -39,4 +45,10 @@ function mapStateToProps(state) {
     dndtables: state.dndtables
   };
 }
-export default connect(mapStateToProps)(DndTables);
+
+function mapDispatchToProps(dispatch){
+  return {
+    moveAction: bindActionCreators(moveRow, dispatch)
+  }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(DndTables);

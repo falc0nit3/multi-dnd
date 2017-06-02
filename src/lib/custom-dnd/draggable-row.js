@@ -10,13 +10,22 @@ const rowSource = {
   canDrag({ rowId, onCanMove }) {
     return onCanMove ? onCanMove({ rowId }) : true;
   },
-  beginDrag({ rowId, onMoveStart }) {
+  beginDrag({ rowId, tableId, onMoveStart }) {
     onMoveStart && onMoveStart({ rowId });
-
-    return { rowId };
+    //console.log('Begin Drag: ' + tableId);
+    return { rowId, tableId };
   },
   endDrag({ rowId, onMoveEnd }) {
     onMoveEnd && onMoveEnd({ rowId });
+  },
+  isDragging(props, monitor) {
+    const item = monitor.getItem();
+    const isDragging = props.rowId === item;
+    // console.log('Is Draggin ');
+    // console.log(props);
+    // console.log(item);
+    // console.log(isDragging);
+    return isDragging;
   }
 };
 const rowTarget = {
@@ -24,17 +33,22 @@ const rowTarget = {
     const targetRowId = targetProps.rowId;
     const sourceProps = monitor.getItem();
     const sourceRowId = sourceProps.rowId;
+    const canDrop = monitor.canDrop();
+    const sourceTableId = sourceProps['tableId'];
+    const destinationTableId = targetProps['tableId'];
 
+    //console.log("canDrop: " + canDrop + " SourceRowId: " + sourceRowId + " TargetRowId: " + targetRowId + " sourceTable: " + sourceTableId + " destinationTable: " + destinationTableId);
     // TODO: check if sourceRowId and targetRowId are undefined -> warning
     if (sourceRowId !== targetRowId) {
-      targetProps.onMove({ sourceRowId, targetRowId });
+      targetProps.onMove({ sourceRowId, targetRowId, sourceTableId, destinationTableId });
     }
   }
 };
 
 const dragSource = DragSource( // eslint-disable-line new-cap
-  DragTypes.ROW, rowSource, connect => ({
-    connectDragSource: connect.dragSource()
+  DragTypes.ROW, rowSource, (connect, monitor) => ({
+    connectDragSource: connect.dragSource(),
+    isDragging: monitor.isDragging()
   })
 );
 const dropTarget = DropTarget( // eslint-disable-line new-cap
@@ -46,7 +60,7 @@ const DraggableRow = ({
   _parent,
   connectDragSource, connectDropTarget,
   onCanMove, onMoveStart, onMoveEnd, // eslint-disable-line no-unused-vars
-  onMove, rowId, ...props // eslint-disable-line no-unused-vars
+  onMove, rowId, tableId, isDragging, ...props // eslint-disable-line no-unused-vars
 }) => (
   // If you want to drag using a handle instead, then you need to pass
   // connectDragSource to a customized cell (DndCell) through React
@@ -65,6 +79,8 @@ const DraggableRow = ({
 
         const node = findDOMNode(e);
 
+        //console.log('isDragging: ' + isDragging);
+
         // Chaining is not allowed
         // https://github.com/gaearon/react-dnd/issues/305#issuecomment-164490014
         connectDropTarget(node);
@@ -80,11 +96,13 @@ DraggableRow.propTypes = {
   ]).isRequired,
   connectDragSource: PropTypes.func.isRequired,
   connectDropTarget: PropTypes.func.isRequired,
+  isDragging: PropTypes.bool.isRequired,
   onMove: PropTypes.func.isRequired,
   onCanMove: PropTypes.func,
   onMoveStart: PropTypes.func,
   onMoveEnd: PropTypes.func,
-  rowId: PropTypes.any.isRequired
+  rowId: PropTypes.any.isRequired,
+  tableId: PropTypes.any.isRequired
 };
 
 const SourceTargetDraggableRow = dragSource(dropTarget(DraggableRow));
